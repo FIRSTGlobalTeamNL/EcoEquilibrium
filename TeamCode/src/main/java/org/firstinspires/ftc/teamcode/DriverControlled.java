@@ -29,8 +29,8 @@ public class DriverControlled extends OpMode {
         br_drive     = hardwareMap.get(DcMotor.class,"right_back");
         accelerator  = hardwareMap.get(DcMotor.class,"accelerator");
         intake_motor = hardwareMap.get(DcMotor.class,"intake");
-        climb_motor1  = hardwareMap.get(DcMotor.class,"climb1");
-        climb_motor2  = hardwareMap.get(DcMotor.class,"climb2");
+        climb_motor1 = hardwareMap.get(DcMotor.class,"climb1");
+        climb_motor2 = hardwareMap.get(DcMotor.class,"climb2");
 
         fl_drive.setDirection(DcMotor.Direction.REVERSE);
         fr_drive.setDirection(DcMotor.Direction.FORWARD);
@@ -75,13 +75,17 @@ public class DriverControlled extends OpMode {
             }
         }
 
-        if (gamepad1.dpad_up){
+        if (gamepad1.dpad_left){
+            climb_motor1.setPower(0);
+            climb_motor2.setPower(0);
+        } else if (gamepad1.dpad_up){
             climb_motor1.setPower(1);
             climb_motor2.setPower(1);
         } else if (gamepad1.dpad_down) {
             climb_motor1.setPower(-1);
             climb_motor2.setPower(-1);
         }
+
 
 
 
