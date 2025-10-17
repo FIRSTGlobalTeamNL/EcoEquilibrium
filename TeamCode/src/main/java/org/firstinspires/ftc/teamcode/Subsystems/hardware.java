@@ -50,15 +50,7 @@ public class hardware {
      * This enumerator contains all the motors, preferably in the order of their hardware ports.
      * They have a config name, direction and mode, which can all easily be initialized with initMotor.
      */
-    public enum motors {
-        leftBack("left_back", DcMotorSimple.Direction.REVERSE),//For swerve forward
-        leftFront("left_front"),
-        rightBack("right_back", DcMotorSimple.Direction.REVERSE),
-        rightFront("right_front", DcMotorSimple.Direction.REVERSE),
-
-        hook("hook", DcMotorSimple.Direction.REVERSE, DcMotorEx.RunMode.RUN_WITHOUT_ENCODER),
-        intake("intake", DcMotorSimple.Direction.REVERSE, DcMotorEx.RunMode.RUN_WITHOUT_ENCODER),
-        outtake("outtake", DcMotorSimple.Direction.REVERSE, DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+    public static class motors {
 
         /**
          * This creates a new motor, with a config name, a direction and a RunMode.
@@ -153,7 +145,7 @@ public class hardware {
      *
      */
     public enum servos {
-        elbowLeft("elbowLeft"),
+        accelerator("accelerator"),
         intake("intakeClaw", 600, 2400),
         outtakeClaw("claw", 600, 2400),
         wrist("wrist"),
