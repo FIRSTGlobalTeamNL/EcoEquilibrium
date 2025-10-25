@@ -2,11 +2,12 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.hardware.lynx.LynxModule;
+
+import java.util.List;
 
 @TeleOp
 public class DriverControlled extends OpMode {
@@ -19,7 +20,10 @@ public class DriverControlled extends OpMode {
     private DcMotor intake_motor;
     private DcMotor climb_motor1;
     private DcMotor climb_motor2;
-
+    private Servo servoLeft, servoRight;
+    private boolean leftOut = false, rightOut = false;
+    private final double leftOutPos = 0.53, leftInPos = 0.12, rightOutPos = 0.15, rightInPos = 0.63;
+    private double leftTimer = 0, rightTimer = 0;
 
     @Override
     public void init() {
@@ -31,6 +35,11 @@ public class DriverControlled extends OpMode {
         intake_motor = hardwareMap.get(DcMotor.class,"intake");
         climb_motor1 = hardwareMap.get(DcMotor.class,"climb1");
         climb_motor2 = hardwareMap.get(DcMotor.class,"climb2");
+        servoLeft    = hardwareMap.get(Servo.class, "servoLeft");
+        servoRight   = hardwareMap.get(Servo.class, "servoRight");
+
+        servoLeft.setPosition(leftInPos);
+        servoRight.setPosition(rightInPos);
 
         fl_drive.setDirection(DcMotor.Direction.REVERSE);
         fr_drive.setDirection(DcMotor.Direction.FORWARD);
@@ -39,6 +48,11 @@ public class DriverControlled extends OpMode {
         intake_motor.setDirection(DcMotor.Direction.FORWARD);
         climb_motor2.setDirection(DcMotor.Direction.REVERSE);
 
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
     }
 
     @Override
@@ -66,7 +80,7 @@ public class DriverControlled extends OpMode {
         br_drive.setPower(rightBackPower);
         intake_motor.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
 
-        if (acceleratorTime == 12){
+        if (acceleratorTime >= 15 & 16 >= acceleratorTime){
             this.accelerator.setPower(0);
         } else {
             if (gamepad1.triangle){
@@ -86,8 +100,23 @@ public class DriverControlled extends OpMode {
             climb_motor2.setPower(-1);
         }
 
-
-
-
+        if (gamepad1.left_bumper && leftTimer + 500 < System.currentTimeMillis()) {
+            servoLeft.setPosition((leftOut) ? leftInPos : leftOutPos);
+            leftOut ^= true;
+            leftTimer = System.currentTimeMillis();
+        }
+        if (gamepad1.right_bumper && rightTimer + 500 < System.currentTimeMillis()) {
+            servoRight.setPosition((rightOut) ? rightInPos : rightOutPos);
+            rightOut ^= true;
+            rightTimer = System.currentTimeMillis();
+        }
+        telemetry.addData("lf", fl_drive.getPower());
+        telemetry.addData("lr", fr_drive.getPower());
+        telemetry.addData("bf", bl_drive.getPower());
+        telemetry.addData("br", br_drive.getPower());
+        telemetry.addData("axial", axial);
+        telemetry.addData("lateral", lateral);
+        telemetry.addData("yaw", yaw);
+        telemetry.update();
     }
 }
